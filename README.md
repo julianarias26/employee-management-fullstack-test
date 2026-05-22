@@ -27,6 +27,58 @@ npm run dev
 ```
 ---
 
+## Modelo de base de datos
+
+Tablas principales:
+
+```txt
+AppUsers
+Departments
+Employees
+Projects
+EmployeeProjects
+PositionHistory
+```
+
+Relaciones principales:
+
+```txt
+Department 1 --- N Employees
+Employee 1 --- N PositionHistory
+Employee N --- N Projects
+```
+
+---
+
+## Configuración de base de datos
+
+La cadena de conexión se encuentra en:
+
+```txt
+backend/EmployeeManagement.Api/appsettings.json
+```
+
+Ejemplo usando SQL Server LocalDB:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=EmployeeManagementDb;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+}
+```
+
+Si se usa SQL Server Express, se puede ajustar así:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=EmployeeManagementDb;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+}
+```
+---
+
 ## Tecnologías utilizadas
 
 ### Backend
@@ -222,59 +274,6 @@ La ventaja es que se pueden agregar nuevas reglas de cálculo sin modificar dire
 Se implementó un repositorio específico para empleados.
 
 No se usó un repositorio genérico porque Entity Framework Core ya cubre gran parte de esa responsabilidad. El repositorio específico se usa para encapsular consultas relevantes del caso de uso, como obtener empleados por departamento que trabajen en al menos un proyecto.
-
----
-
-## Modelo de base de datos
-
-Tablas principales:
-
-```txt
-AppUsers
-Departments
-Employees
-Projects
-EmployeeProjects
-PositionHistory
-```
-
-Relaciones principales:
-
-```txt
-Department 1 --- N Employees
-Employee 1 --- N PositionHistory
-Employee N --- N Projects
-```
-
----
-
-## Configuración de base de datos
-
-La cadena de conexión se encuentra en:
-
-```txt
-backend/EmployeeManagement.Api/appsettings.json
-```
-
-Ejemplo usando SQL Server LocalDB:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=EmployeeManagementDb;Trusted_Connection=True;TrustServerCertificate=True;"
-  }
-}
-```
-
-Si se usa SQL Server Express, se puede ajustar así:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=EmployeeManagementDb;Trusted_Connection=True;TrustServerCertificate=True;"
-  }
-}
-```
 
 ---
 
