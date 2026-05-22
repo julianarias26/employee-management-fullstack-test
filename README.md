@@ -804,39 +804,3 @@ cd frontend
 npm install
 npm run dev
 ```
-
----
-
-# Notas importantes
-
-- El archivo `.env` no debe subirse al repositorio.
-- El archivo `.env.example` sí debe subirse.
-- La carpeta `node_modules` no debe subirse.
-- Las carpetas `bin` y `obj` no deben subirse.
-- Las migraciones de EF Core sí deben subirse.
-- La URL del backend puede variar según el puerto local.
-
----
-
-# Posibles mejoras para producción
-
-Si este proyecto se llevara a producción, se podrían agregar:
-
-- Refresh tokens.
-- Manejo global de excepciones.
-- Serilog para logging estructurado.
-- FluentValidation para validaciones más robustas.
-- Paginación en el listado de empleados.
-- Filtros de búsqueda.
-- Auditoría de cambios.
-- Pruebas unitarias.
-- Pruebas de integración.
-- Manejo seguro de secretos con variables de entorno o Azure Key Vault.
-
----
-
-# Resumen técnico
-
-La solución implementa una aplicación Full Stack para gestión de empleados. El backend expone una API REST protegida con JWT y roles. La persistencia se maneja con Entity Framework Core y SQL Server. El dominio contiene la lógica de cálculo de bono usando Strategy Pattern. El frontend consume la API mediante Axios, maneja autenticación, guarda el token JWT y permite realizar operaciones CRUD según el rol del usuario.
-
-La solución prioriza claridad, simplicidad y mantenibilidad, evitando sobrearquitectura innecesaria para el alcance de la prueba técnica.
