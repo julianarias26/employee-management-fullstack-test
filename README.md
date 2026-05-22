@@ -1,4 +1,4 @@
-# Employee Management - Prueba Técnica Full Stack .NET + React TypeScript
+# Gestión de empleados - Prueba Técnica Full Stack .NET + React TypeScript
 
 Solución desarrollada para una prueba técnica Full Stack usando **ASP.NET Core Web API**, **Entity Framework Core**, **JWT Authentication** y **React con TypeScript**.
 
