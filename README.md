@@ -6,6 +6,27 @@ El sistema permite gestionar empleados, calcular su bono anual, consultar histor
 
 ---
 
+# Comandos rápidos de ejecución
+
+## Backend
+
+```bash
+cd backend
+dotnet restore
+dotnet build
+dotnet ef database update --project EmployeeManagement.Infrastructure --startup-project EmployeeManagement.Api
+dotnet run --project EmployeeManagement.Api
+```
+
+## Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+---
+
 ## Tecnologías utilizadas
 
 ### Backend
@@ -784,23 +805,3 @@ dotnet ef database update --project EmployeeManagement.Infrastructure --startup-
 - Validaciones básicas implementadas.
 
 ---
-
-# Comandos rápidos de ejecución
-
-## Backend
-
-```bash
-cd backend
-dotnet restore
-dotnet build
-dotnet ef database update --project EmployeeManagement.Infrastructure --startup-project EmployeeManagement.Api
-dotnet run --project EmployeeManagement.Api
-```
-
-## Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
