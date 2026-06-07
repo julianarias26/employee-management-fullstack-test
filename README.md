@@ -1,44 +1,162 @@
-# Gestión de empleados - Prueba Técnica Full Stack .NET + React TypeScript
+# Gestión de empleados - Full Stack .NET + React TypeScript
 
-Solución desarrollada para una prueba técnica Full Stack usando **ASP.NET Core Web API**, **Entity Framework Core**, **JWT Authentication** y **React con TypeScript**.
+Aplicación Full Stack para la administración de empleados, desarrollada con **ASP.NET Core Web API**, **Entity Framework Core**, **SQL Server**, **JWT Authentication** y **React con TypeScript**.
 
-El sistema permite gestionar empleados, calcular su bono anual, manejar historial de cargos, autenticar usuarios con JWT y aplicar autorización basada en roles.
+El sistema permite registrar, consultar, actualizar y eliminar empleados, calcular bonos anuales, gestionar historial de cargos, asociar empleados a proyectos, autenticar usuarios mediante JWT y controlar el acceso según roles.
 
 ---
 
-# 1. Requisitos previos
+## Tabla de contenido
 
-Antes de ejecutar el proyecto, se debe tener instalado:
+- [Características principales](#características-principales)
+- [Tecnologías utilizadas](#tecnologías-utilizadas)
+- [Arquitectura del proyecto](#arquitectura-del-proyecto)
+- [Estructura del repositorio](#estructura-del-repositorio)
+- [Requisitos previos](#requisitos-previos)
+- [Configuración del backend](#configuración-del-backend)
+- [Ejecución del backend](#ejecución-del-backend)
+- [Configuración del frontend](#configuración-del-frontend)
+- [Ejecución del frontend](#ejecución-del-frontend)
+- [Autenticación y autorización](#autenticación-y-autorización)
+- [Endpoints principales](#endpoints-principales)
+- [Modelo de base de datos](#modelo-de-base-de-datos)
+- [Patrones implementados](#patrones-implementados)
+- [Validaciones](#validaciones)
+- [Middleware personalizado](#middleware-personalizado)
+- [Consulta LINQ destacada](#consulta-linq-destacada)
+- [Comandos rápidos](#comandos-rápidos)
+- [Resumen técnico](#resumen-técnico)
 
-## Backend
+---
 
-- .NET 8 SDK
-- SQL Server LocalDB o SQL Server Express
+## Características principales
+
+### Backend
+
+- API REST construida con ASP.NET Core Web API.
+- Persistencia con Entity Framework Core y SQL Server.
+- Autenticación mediante JWT.
+- Autorización basada en roles.
+- CRUD completo de empleados.
+- Cálculo de bono anual según el cargo del empleado.
+- Gestión de historial de cargos.
+- Relación entre empleados, departamentos y proyectos.
+- Relación muchos a muchos entre empleados y proyectos.
+- Middleware personalizado para trazabilidad de solicitudes HTTP.
+- Documentación de endpoints con Swagger.
+- Migraciones de base de datos con Entity Framework Core.
+
+### Frontend
+
+- Aplicación construida con React y TypeScript.
+- Consumo de API mediante Axios.
+- Pantalla de login.
+- Pantalla de registro.
+- Gestión del token JWT.
+- Envío automático del token en peticiones protegidas.
+- Listado de empleados.
+- Creación, edición y eliminación de empleados.
+- Visualización de opciones según el rol del usuario.
+- Manejo de estados de carga, éxito y error.
+- Validaciones básicas en formularios.
+
+---
+
+## Tecnologías utilizadas
+
+### Backend
+
+- .NET 8
+- ASP.NET Core Web API
+- Entity Framework Core
+- SQL Server / SQL Server LocalDB
+- JWT Bearer Authentication
+- Swagger / OpenAPI
+- C#
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- Axios
+- CSS
+
+### Herramientas
+
+- Visual Studio / Visual Studio Code
+- SQL Server Management Studio
 - Entity Framework Core CLI
-
-Para instalar la herramienta de EF Core:
-
-```bash
-dotnet tool install --global dotnet-ef
-```
-
-Si ya está instalada:
-
-```bash
-dotnet tool update --global dotnet-ef
-```
-
-## Frontend
-
-- Node.js
 - npm
 
 ---
 
-# 2. Estructura general del repositorio
+## Arquitectura del proyecto
+
+El backend está organizado usando una arquitectura por capas, separando responsabilidades entre la API, la lógica de aplicación, el dominio y la infraestructura.
 
 ```txt
-employee-management-test
+EmployeeManagement.Api
+EmployeeManagement.Application
+EmployeeManagement.Domain
+EmployeeManagement.Infrastructure
+```
+
+### EmployeeManagement.Api
+
+Contiene la capa de entrada de la aplicación.
+
+Responsabilidades principales:
+
+- Controladores HTTP.
+- Configuración de Swagger.
+- Configuración de CORS.
+- Configuración de autenticación JWT.
+- Registro de dependencias.
+- Middleware personalizado.
+- Punto de arranque de la aplicación.
+
+### EmployeeManagement.Application
+
+Contiene la lógica de aplicación y los contratos que coordinan los casos de uso.
+
+Responsabilidades principales:
+
+- DTOs.
+- Interfaces de servicios.
+- Servicios de aplicación.
+- Contratos de repositorios.
+- Coordinación entre la API, el dominio y la infraestructura.
+
+### EmployeeManagement.Domain
+
+Contiene las entidades principales y reglas de negocio.
+
+Responsabilidades principales:
+
+- Entidades del dominio.
+- Enums.
+- Reglas principales del negocio.
+- Estrategias para el cálculo de bonos.
+
+### EmployeeManagement.Infrastructure
+
+Contiene la implementación técnica de persistencia y servicios externos.
+
+Responsabilidades principales:
+
+- `AppDbContext`.
+- Configuración de entidades con Entity Framework Core.
+- Repositorios.
+- Generación de tokens JWT.
+- Migraciones de base de datos.
+
+---
+
+## Estructura del repositorio
+
+```txt
+employee-management
 ├── backend
 │   ├── EmployeeManagement.sln
 │   ├── EmployeeManagement.Api
@@ -58,11 +176,40 @@ employee-management-test
 
 ---
 
-# 3. Configuración del backend
+## Requisitos previos
 
-## 3.1 Cadena de conexión
+Antes de ejecutar el proyecto, se debe tener instalado:
 
-La cadena de conexión se configura en:
+### Backend
+
+- .NET 8 SDK
+- SQL Server LocalDB o SQL Server Express
+- Entity Framework Core CLI
+
+Instalar Entity Framework Core CLI:
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+Actualizar Entity Framework Core CLI si ya está instalado:
+
+```bash
+dotnet tool update --global dotnet-ef
+```
+
+### Frontend
+
+- Node.js
+- npm
+
+---
+
+## Configuración del backend
+
+### Cadena de conexión
+
+La cadena de conexión se configura en el archivo:
 
 ```txt
 backend/EmployeeManagement.Api/appsettings.json
@@ -78,7 +225,7 @@ Ejemplo usando SQL Server LocalDB:
 }
 ```
 
-Si se usa SQL Server Express, se puede ajustar así:
+Ejemplo usando SQL Server Express:
 
 ```json
 {
@@ -90,7 +237,7 @@ Si se usa SQL Server Express, se puede ajustar así:
 
 ---
 
-## 3.2 Configuración JWT
+### Configuración JWT
 
 La configuración JWT también se encuentra en:
 
@@ -110,11 +257,11 @@ Ejemplo:
 }
 ```
 
-Esta clave es solo para ambiente local o de prueba. En producción debería manejarse mediante variables de entorno o un servicio seguro de secretos.
+> La clave JWT incluida en el ejemplo es solo para ambiente local. En producción debe manejarse mediante variables de entorno, Azure Key Vault u otro servicio seguro de secretos.
 
 ---
 
-# 4. Ejecutar backend
+## Ejecución del backend
 
 Ubicarse en la carpeta del backend:
 
@@ -128,7 +275,7 @@ Restaurar paquetes:
 dotnet restore
 ```
 
-Compilar solución:
+Compilar la solución:
 
 ```bash
 dotnet build
@@ -140,7 +287,7 @@ Aplicar migraciones de Entity Framework Core:
 dotnet ef database update --project EmployeeManagement.Infrastructure --startup-project EmployeeManagement.Api
 ```
 
-Ejecutar API:
+Ejecutar la API:
 
 ```bash
 dotnet run --project EmployeeManagement.Api
@@ -156,21 +303,21 @@ El puerto puede variar según la configuración local. Se debe usar el puerto mo
 
 ---
 
-# 5. Swagger
+## Swagger
 
-Después de ejecutar el backend, abrir Swagger en el navegador:
+Después de ejecutar el backend, se puede abrir Swagger en el navegador:
 
 ```txt
 https://localhost:7164/swagger
 ```
 
-Si la API se ejecuta en otro puerto, reemplazar `7164` por el puerto mostrado en la terminal.
+Si la API se ejecuta en otro puerto, se debe reemplazar `7164` por el puerto mostrado en la terminal.
 
 ---
 
-# 6. Configuración del frontend
+## Configuración del frontend
 
-La URL del backend es configurable mediante variables de entorno.
+La URL del backend se configura mediante variables de entorno.
 
 Crear el archivo:
 
@@ -178,7 +325,7 @@ Crear el archivo:
 frontend/.env
 ```
 
-Basándose en el archivo:
+Tomando como referencia el archivo:
 
 ```txt
 frontend/.env.example
@@ -190,7 +337,7 @@ Contenido esperado:
 VITE_API_BASE_URL=https://localhost:7164/api
 ```
 
-Si el backend corre en otro puerto, cambiar `7164` por el puerto real.
+Si el backend se ejecuta en otro puerto, se debe cambiar `7164` por el puerto real.
 
 Ejemplo:
 
@@ -198,7 +345,7 @@ Ejemplo:
 VITE_API_BASE_URL=https://localhost:7001/api
 ```
 
-La variable se usa en:
+La variable se utiliza en:
 
 ```txt
 frontend/src/api/apiClient.ts
@@ -214,7 +361,7 @@ Esto permite cambiar la URL de la API sin modificar el código fuente.
 
 ---
 
-# 7. Ejecutar frontend
+## Ejecución del frontend
 
 Ubicarse en la carpeta del frontend:
 
@@ -228,7 +375,7 @@ Instalar dependencias:
 npm install
 ```
 
-Ejecutar aplicación:
+Ejecutar la aplicación:
 
 ```bash
 npm run dev
@@ -242,7 +389,7 @@ http://localhost:5173
 
 ---
 
-# 8. Compilar frontend
+## Compilar frontend
 
 Para validar que el frontend compila correctamente:
 
@@ -252,37 +399,39 @@ npm run build
 
 ---
 
-# 9. Flujo recomendado para probar la aplicación
+## Autenticación y autorización
 
-## 9.1 Ejecutar backend
+El sistema maneja autenticación mediante JWT y autorización basada en roles.
 
-```bash
-cd backend
-dotnet run --project EmployeeManagement.Api
-```
-
-## 9.2 Ejecutar frontend
-
-En otra terminal:
-
-```bash
-cd frontend
-npm run dev
-```
-
-## 9.3 Abrir Swagger
+Roles disponibles:
 
 ```txt
-https://localhost:7164/swagger
+Admin
+User
 ```
 
-## 9.4 Registrar usuarios desde Swagger o desde el frontend
+### Rol Admin
 
-Se pueden registrar usuarios con rol `Admin` o `User`.
+El usuario con rol `Admin` puede:
+
+- Ver el listado de empleados.
+- Consultar empleados.
+- Crear empleados.
+- Editar empleados.
+- Eliminar empleados.
+
+### Rol User
+
+El usuario con rol `User` puede:
+
+- Ver el listado de empleados.
+- Consultar empleados.
+
+El usuario con rol `User` no puede crear, editar ni eliminar empleados.
 
 ---
 
-# 10. Registro de usuario Admin
+## Registro de usuario Admin
 
 Endpoint:
 
@@ -303,7 +452,7 @@ Body:
 
 ---
 
-# 11. Registro de usuario User
+## Registro de usuario User
 
 Endpoint:
 
@@ -324,7 +473,7 @@ Body:
 
 ---
 
-# 12. Login
+## Login
 
 Endpoint:
 
@@ -355,14 +504,14 @@ Respuesta esperada:
 
 ---
 
-# 13. Autorización en Swagger
+## Autorización en Swagger
 
-Para probar endpoints protegidos:
+Para probar endpoints protegidos desde Swagger:
 
-1. Ejecutar login.
-2. Copiar el token JWT.
+1. Ejecutar el endpoint de login.
+2. Copiar el token JWT recibido.
 3. Presionar el botón `Authorize` en Swagger.
-4. Pegar el token con el formato:
+4. Pegar el token usando el siguiente formato:
 
 ```txt
 Bearer JWT_TOKEN
@@ -376,16 +525,16 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...
 
 ---
 
-# 14. Endpoints principales
+## Endpoints principales
 
-## Autenticación
+### Autenticación
 
 ```http
 POST /api/auth/register
 POST /api/auth/login
 ```
 
-## Empleados
+### Empleados
 
 ```http
 GET /api/employees
@@ -398,215 +547,20 @@ DELETE /api/employees/{id}
 
 ---
 
-# 15. Reglas de autorización
+## Reglas de autorización
 
 ```txt
-GET /api/employees                         -> Admin, User
-GET /api/employees/{id}                    -> Admin, User
-GET /api/employees/by-department/...       -> Admin, User
-POST /api/employees                        -> Admin
-PUT /api/employees/{id}                    -> Admin
-DELETE /api/employees/{id}                 -> Admin
+GET    /api/employees                                  -> Admin, User
+GET    /api/employees/{id}                             -> Admin, User
+GET    /api/employees/by-department/{departmentId}/with-projects -> Admin, User
+POST   /api/employees                                  -> Admin
+PUT    /api/employees/{id}                             -> Admin
+DELETE /api/employees/{id}                             -> Admin
 ```
 
 ---
 
-# 16. Flujo como Admin
-
-El usuario con rol `Admin` puede:
-
-- Ver listado de empleados.
-- Consultar empleados.
-- Crear empleados.
-- Editar empleados.
-- Eliminar empleados.
-
----
-
-# 17. Flujo como User
-
-El usuario con rol `User` puede:
-
-- Ver listado de empleados.
-- Consultar empleados.
-
-No puede crear, editar ni eliminar empleados.
-
----
-
-# 18. Comandos rápidos de ejecución
-
-## Backend
-
-```bash
-cd backend
-dotnet restore
-dotnet build
-dotnet ef database update --project EmployeeManagement.Infrastructure --startup-project EmployeeManagement.Api
-dotnet run --project EmployeeManagement.Api
-```
-
-## Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-# 19. Tecnologías utilizadas
-
-## Backend
-
-- .NET 8
-- ASP.NET Core Web API
-- Entity Framework Core
-- SQL Server LocalDB
-- JWT Bearer Authentication
-- Swagger
-- C#
-
-## Frontend
-
-- React
-- TypeScript
-- Vite
-- Axios
-- CSS
-
----
-
-# 20. Funcionalidades principales
-
-## Backend
-
-- CRUD completo de empleados.
-- Cálculo de bono anual:
-  - Empleado regular: 10% del salario.
-  - Manager: 20% del salario.
-- Manejo de historial de cargos por empleado.
-- Modelo de departamentos.
-- Modelo de proyectos.
-- Relación muchos a muchos entre empleados y proyectos.
-- Autenticación con JWT.
-- Registro de usuarios.
-- Login de usuarios.
-- Autorización basada en roles.
-- Middleware personalizado para registrar solicitudes HTTP.
-- Documentación de endpoints con Swagger.
-- Migraciones con Entity Framework Core.
-
-## Frontend
-
-- Pantalla de login.
-- Pantalla de registro de usuario.
-- Almacenamiento del token JWT.
-- Envío automático del token en peticiones protegidas.
-- Listado de empleados.
-- Creación de empleados.
-- Edición de empleados.
-- Eliminación de empleados.
-- Validaciones básicas en formularios.
-- Mensajes de carga, éxito y error.
-- Visualización de acciones según rol del usuario.
-
----
-
-# 21. Arquitectura del backend
-
-El backend usa una arquitectura por capas simple:
-
-```txt
-EmployeeManagement.Api
-EmployeeManagement.Application
-EmployeeManagement.Domain
-EmployeeManagement.Infrastructure
-```
-
-## EmployeeManagement.Api
-
-Contiene:
-
-- Controladores.
-- Configuración de Swagger.
-- Configuración de CORS.
-- Configuración de JWT.
-- Middleware personalizado.
-- Punto de entrada de la aplicación.
-
-## EmployeeManagement.Application
-
-Contiene:
-
-- DTOs.
-- Interfaces de servicios.
-- Servicios de aplicación.
-- Contratos de repositorios.
-
-## EmployeeManagement.Domain
-
-Contiene:
-
-- Entidades del dominio.
-- Enums.
-- Reglas principales de negocio.
-- Estrategias para cálculo de bono.
-
-## EmployeeManagement.Infrastructure
-
-Contiene:
-
-- `AppDbContext`.
-- Configuración de entidades con EF Core.
-- Repositorios.
-- Generación de tokens JWT.
-- Migraciones de base de datos.
-
----
-
-# 22. Patrones utilizados
-
-## Patrón arquitectónico
-
-### Layered Architecture
-
-Se usó una arquitectura por capas para separar responsabilidades:
-
-- La API expone endpoints HTTP.
-- Application coordina los casos de uso.
-- Domain contiene reglas de negocio.
-- Infrastructure maneja persistencia y servicios técnicos.
-
-Esto ayuda a mantener el código organizado, claro y fácil de extender.
-
----
-
-## Patrones de diseño
-
-### Strategy Pattern
-
-Se usó para calcular el bono anual de empleados.
-
-Actualmente existen dos reglas:
-
-- Empleado regular: 10%.
-- Manager: 20%.
-
-La ventaja es que se pueden agregar nuevas reglas de cálculo sin modificar directamente la entidad `Employee`.
-
----
-
-### Repository Pattern
-
-Se implementó un repositorio específico para empleados.
-
-No se usó un repositorio genérico porque Entity Framework Core ya cubre gran parte de esa responsabilidad. El repositorio específico se usa para encapsular consultas relevantes del caso de uso, como obtener empleados por departamento que trabajen en al menos un proyecto.
-
----
-
-# 23. Modelo de base de datos
+## Modelo de base de datos
 
 Tablas principales:
 
@@ -627,9 +581,18 @@ Employee 1 --- N PositionHistory
 Employee N --- N Projects
 ```
 
+### Descripción general
+
+- `AppUsers`: almacena los usuarios del sistema.
+- `Departments`: almacena los departamentos.
+- `Employees`: almacena la información principal de los empleados.
+- `Projects`: almacena los proyectos disponibles.
+- `EmployeeProjects`: tabla intermedia para la relación muchos a muchos entre empleados y proyectos.
+- `PositionHistory`: almacena el historial de cargos de cada empleado.
+
 ---
 
-# 24. Migraciones EF Core
+## Migraciones EF Core
 
 Las migraciones se encuentran en:
 
@@ -637,7 +600,7 @@ Las migraciones se encuentran en:
 backend/EmployeeManagement.Infrastructure/Persistence/Migrations
 ```
 
-Para aplicarlas:
+Para aplicar las migraciones:
 
 ```bash
 dotnet ef database update --project EmployeeManagement.Infrastructure --startup-project EmployeeManagement.Api
@@ -645,26 +608,45 @@ dotnet ef database update --project EmployeeManagement.Infrastructure --startup-
 
 ---
 
-# 25. Middleware personalizado
+## Patrones implementados
 
-El backend incluye un middleware que registra información de cada solicitud HTTP:
+### Layered Architecture
 
-- Método HTTP.
-- Ruta.
-- Código de respuesta.
-- Tiempo de ejecución en milisegundos.
+Se utilizó una arquitectura por capas para separar responsabilidades y mantener una estructura clara.
 
-Ejemplo de log:
+Distribución general:
 
-```txt
-HTTP GET /api/employees responded 200 in 85 ms
-```
+- `Api`: expone endpoints HTTP.
+- `Application`: coordina los casos de uso.
+- `Domain`: contiene entidades y reglas de negocio.
+- `Infrastructure`: maneja persistencia y servicios técnicos.
 
-No se registra el body de las peticiones para evitar exponer información sensible como contraseñas o tokens.
+Esta separación facilita el mantenimiento, la extensibilidad y la organización del código.
 
 ---
 
-# 26. Estructura del frontend
+### Strategy Pattern
+
+Se implementó el patrón Strategy para calcular el bono anual de los empleados.
+
+Reglas actuales:
+
+- Empleado regular: 10% del salario.
+- Manager: 20% del salario.
+
+Este patrón permite agregar nuevas reglas de cálculo sin modificar directamente la entidad `Employee`.
+
+---
+
+### Repository Pattern
+
+Se implementó un repositorio específico para empleados.
+
+No se utilizó un repositorio genérico porque Entity Framework Core ya cubre gran parte de esa responsabilidad. El repositorio específico permite encapsular consultas relevantes del caso de uso, como obtener empleados por departamento que trabajen en al menos un proyecto.
+
+---
+
+## Estructura del frontend
 
 ```txt
 frontend
@@ -700,20 +682,20 @@ frontend
 
 ---
 
-# 27. Descripción de carpetas del frontend
+## Descripción de carpetas del frontend
 
-## api
+### api
 
 Contiene la lógica de comunicación con el backend.
 
 Archivos principales:
 
 - `apiClient.ts`: configuración base de Axios.
-- `authService.ts`: llamadas HTTP de autenticación.
-- `employeeService.ts`: llamadas HTTP de empleados.
+- `authService.ts`: llamadas HTTP relacionadas con autenticación.
+- `employeeService.ts`: llamadas HTTP relacionadas con empleados.
 - `apiError.ts`: manejo de errores de la API.
 
-## components
+### components
 
 Contiene componentes reutilizables.
 
@@ -722,7 +704,7 @@ Ejemplos:
 - `Alert.tsx`
 - `LoadingMessage.tsx`
 
-## features
+### features
 
 Contiene componentes organizados por funcionalidad.
 
@@ -731,9 +713,9 @@ Ejemplos:
 - `auth`
 - `employees`
 
-## models
+### models
 
-Contiene interfaces TypeScript usadas para tipar los datos del frontend.
+Contiene interfaces TypeScript utilizadas para tipar los datos del frontend.
 
 Ejemplos:
 
@@ -744,25 +726,25 @@ Ejemplos:
 
 ---
 
-# 28. Seguridad en frontend
+## Seguridad en frontend
 
-El frontend guarda el token JWT en `localStorage`.
+El frontend almacena el token JWT en `localStorage`.
 
-El archivo `apiClient.ts` agrega automáticamente el token en cada petición:
+El archivo `apiClient.ts` agrega automáticamente el token en cada petición protegida:
 
 ```txt
 Authorization: Bearer JWT_TOKEN
 ```
 
-La interfaz oculta acciones de administración cuando el usuario tiene rol `User`.
+La interfaz oculta acciones administrativas cuando el usuario tiene rol `User`.
 
-Sin embargo, la seguridad real está en el backend mediante JWT y `[Authorize]`.
+Sin embargo, la seguridad real se aplica en el backend mediante JWT y atributos de autorización como `[Authorize]`.
 
 ---
 
-# 29. Validaciones implementadas
+## Validaciones
 
-## Backend
+### Backend
 
 - Nombre de empleado requerido.
 - Salario mayor a cero.
@@ -772,9 +754,9 @@ Sin embargo, la seguridad real está en el backend mediante JWT y `[Authorize]`.
 - Email con formato válido.
 - Password requerido.
 - Password mínimo de 6 caracteres.
-- Rol válido: Admin o User.
+- Rol válido: `Admin` o `User`.
 
-## Frontend
+### Frontend
 
 - Nombre requerido.
 - Salario mayor a cero.
@@ -787,12 +769,33 @@ Sin embargo, la seguridad real está en el backend mediante JWT y `[Authorize]`.
 
 ---
 
-# 30. Consulta LINQ requerida
+## Middleware personalizado
 
-Se implementó una consulta para obtener empleados que:
+El backend incluye un middleware para registrar información básica de cada solicitud HTTP.
 
-- pertenecen a un departamento específico;
-- trabajan en al menos un proyecto.
+Información registrada:
+
+- Método HTTP.
+- Ruta.
+- Código de respuesta.
+- Tiempo de ejecución en milisegundos.
+
+Ejemplo de log:
+
+```txt
+HTTP GET /api/employees responded 200 in 85 ms
+```
+
+No se registra el cuerpo de las peticiones para evitar exponer información sensible como contraseñas o tokens.
+
+---
+
+## Consulta LINQ destacada
+
+Se implementó una consulta para obtener empleados que cumplen las siguientes condiciones:
+
+- Pertenecen a un departamento específico.
+- Trabajan en al menos un proyecto.
 
 Ejemplo conceptual:
 
@@ -813,8 +816,75 @@ GET /api/employees/by-department/{departmentId}/with-projects
 
 ---
 
-# 31. Resumen técnico
+## Flujo recomendado para probar la aplicación
 
-La solución implementa una aplicación Full Stack para gestión de empleados. El backend expone una API REST protegida con JWT y roles. La persistencia se maneja con Entity Framework Core y SQL Server. El dominio contiene la lógica de cálculo de bono usando Strategy Pattern. El frontend consume la API mediante Axios, maneja autenticación, guarda el token JWT y permite realizar operaciones CRUD según el rol del usuario.
+### 1. Ejecutar backend
 
-La solución prioriza claridad, simplicidad y mantenibilidad, evitando sobrearquitectura innecesaria para el alcance de la prueba técnica.
+```bash
+cd backend
+dotnet run --project EmployeeManagement.Api
+```
+
+### 2. Ejecutar frontend
+
+En otra terminal:
+
+```bash
+cd frontend
+npm run dev
+```
+
+### 3. Abrir Swagger
+
+```txt
+https://localhost:7164/swagger
+```
+
+### 4. Registrar usuarios
+
+Se pueden registrar usuarios con rol `Admin` o `User` desde Swagger o desde el frontend.
+
+### 5. Iniciar sesión
+
+Luego de iniciar sesión, el sistema guarda el token JWT y lo utiliza para consumir los endpoints protegidos.
+
+---
+
+## Comandos rápidos
+
+### Backend
+
+```bash
+cd backend
+dotnet restore
+dotnet build
+dotnet ef database update --project EmployeeManagement.Infrastructure --startup-project EmployeeManagement.Api
+dotnet run --project EmployeeManagement.Api
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Build del frontend
+
+```bash
+cd frontend
+npm run build
+```
+
+---
+
+## Resumen técnico
+
+Este proyecto implementa una aplicación Full Stack para la gestión de empleados.
+
+El backend expone una API REST protegida con JWT y autorización basada en roles. La persistencia se maneja con Entity Framework Core y SQL Server. La lógica de negocio incluye el cálculo de bonos anuales mediante Strategy Pattern, gestión de historial de cargos, departamentos y proyectos.
+
+El frontend consume la API mediante Axios, maneja autenticación, conserva el token JWT y permite ejecutar operaciones según el rol del usuario autenticado.
+
+La solución prioriza una estructura clara, separación de responsabilidades y mantenibilidad, evitando una complejidad innecesaria para el alcance del sistema.
